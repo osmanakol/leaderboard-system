@@ -1,11 +1,12 @@
-import { BaseError } from './index';
+import { BaseError, loggerUtil } from './index';
 
 class ErrorHandler {
     public async handleError(err: Error):Promise<void> {
         // TODO : Logger implementation
-        if (process.env.NODE_ENV === "development"){
-            console.error(err.stack)
-        }
+        await loggerUtil.error(
+            "Error message from centralized error handlers",
+            err
+        )
     }
 
     public isTrustedError(error:Error) {
