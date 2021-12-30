@@ -1,9 +1,17 @@
 import { Router } from "express";
 
 export default abstract class IRoute {
-    private moduleName:string
+    private _moduleName:string
+    protected router:Router
+
+    constructor(moduleName:string) {
+        this._moduleName = moduleName
+        this.router = Router()
+    }
+
     abstract getRoutes():Router
+
     getPath():string {
-        return "/" + this.moduleName
+        return "/" + this._moduleName
     }
 }
