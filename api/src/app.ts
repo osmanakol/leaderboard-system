@@ -4,7 +4,7 @@ import rateLimit from "express-rate-limit";
 import helmet from "helmet";
 import { ApiRoute } from './routes/api.route';
 import mongo_connection from "./database/mongo.database";
-
+import { errorHandlerUtil, BaseError } from "./utils/index";
 
 class Api {
     public api: Application
@@ -15,7 +15,7 @@ class Api {
         this.config()
         this.routeConfig()
         this.mongoSetup()
-        this.errorHandler()
+        this.errorHandlerSetup()
     }
 
     private config = () => {
@@ -44,14 +44,32 @@ class Api {
         await mongo_connection.connection()
     }
 
-    private errorHandler = () => {
-        this.api.use((err:Error, req:Request, res:Response, next:NextFunction) => {
-            if (process.env.NODE_ENV === "development") {
-                console.error(err.stack)
-                res.status(500).send(err.message)
+    private errorHandlerSetup = () => {
+        this.api.use(async (err:Error, req:Request, res:Response, next:NextFunction) => {
+            await errorHandlerUtil.handleError(err)
+            if(!errorHandlerUtil.isTrustedError(err)){
+                res.status(500).send("Something Broke")
+            } else {
+                // That means error type is BaseError
+                
+                const error:BaseError = err as BaseError
+                
+                res.status(error.httpCode).json({
+                    status: "failed",
+                    err: error.message
+                })
             }
-            res.status(500).send('Something Brokes!!')
+          
+        })
 
+        process.on("unhandledRejection", (reason: Error, promise: Promise<any>) => {
+            throw reason
+        })
+
+        process.on("uncaughtException", (err:Error) => {
+            errorHandlerUtil.handleError(err)
+            if (!errorHandlerUtil.isTrustedError(err))
+                process.exit(1)
         })
     }
 }
