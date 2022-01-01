@@ -14,8 +14,8 @@ export abstract class BaseRepository<T, K> implements IRead<T, K>, IWrite<T,K> {
     async create(query: Query<T, K, {}, K>, options?: SaveOptions): Promise<DocumentType<K>> {
         return await new this._model(query).save(options) as DocumentType<K>
     }
-    async update(query: FilterQuery<T>, update: UpdateQuery<T>, options: QueryOptions): Promise<DocumentType<K>> {
-        return await this._model.updateOne(query, update, options) as unknown as DocumentType<K>
+    async update(query: FilterQuery<T>, update: UpdateQuery<T>, options: QueryOptions): Promise<Boolean> {
+        return await (await this._model.updateOne(query, update, options)).modifiedCount != 0
     }
     async delete(query: FilterQuery<T>, options?: QueryOptions): Promise<Boolean> {
         return await (await this._model.deleteOne(query, options)).deletedCount != 0
