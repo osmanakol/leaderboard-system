@@ -6,7 +6,7 @@ export interface IService<T extends IModel>{
     create(dtoItem:T, options?: SaveOptions):Promise<T>
     update(filter:FilterQuery<T>, updateQuery:UpdateQuery<T>, options:QueryOptions):Promise<T>
     findOne(filter:FilterQuery<T>, projection:any, options:QueryOptions):Promise<T>
-    delete():void
+    delete(query: FilterQuery<T>, options?: QueryOptions):Promise<Boolean>
 }
 
 
@@ -38,8 +38,9 @@ export abstract class Service<T extends IModel> implements IService<T>{
         const result = await this._repository.findOne(filter, projection, options)
         return result as unknown as T
     }
-    delete(): void {
-        throw new Error("Method not implemented.");
+    async delete(query: FilterQuery<T>, options?: QueryOptions): Promise<Boolean> {
+        const result = await this._repository.delete(query, options)
+        return result
     }
 
 } 
