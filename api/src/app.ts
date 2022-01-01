@@ -4,7 +4,8 @@ import rateLimit from "express-rate-limit";
 import helmet from "helmet";
 import { ApiRoute } from './routes/api.route';
 import mongo_connection from "./database/mongo.database";
-import { errorHandlerUtil, BaseError } from "./utils/index";
+import { errorHandlerUtil } from "./utils/index";
+import { error_handler_middleware } from "./middleware/error_handler.middleware";
 
 class Api {
     public api: Application
@@ -45,22 +46,7 @@ class Api {
     }
 
     private errorHandlerSetup = () => {
-        this.api.use(async (err:Error, req:Request, res:Response, next:NextFunction) => {
-            await errorHandlerUtil.handleError(err)
-            if(!errorHandlerUtil.isTrustedError(err)){
-                res.status(500).send("Something Broke")
-            } else {
-                // That means error type is BaseError
-                
-                const error:BaseError = err as BaseError
-                
-                res.status(error.httpCode).json({
-                    status: "failed",
-                    err: error.message
-                })
-            }
-          
-        })
+        this.api.use(error_handler_middleware())
 
         process.on("unhandledRejection", (reason: Error, promise: Promise<any>) => {
             throw reason

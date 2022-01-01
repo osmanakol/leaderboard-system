@@ -7,9 +7,10 @@ import { HttpStatusCode } from './index';
  * @param res
  * @param payload
  */
-export const BaseResponse = (status_code:HttpStatusCode, payload:any ,res:Response) => {
+export const BaseResponse = (status_code:HttpStatusCode, payload:any ,res:Response, message:string = "OK") => {
     res.status(status_code).json({
         status: "success",
-        payload:payload
+        payload:payload,
+        message: message
     })
 }
