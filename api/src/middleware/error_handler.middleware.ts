@@ -14,7 +14,8 @@ export const error_handler_middleware = () => {
                     status: "failed",
                     err: mongo_err.message
                 }, 
-                res
+                res,
+                mongo_err.message
             )
         }
         else if(!errorHandlerUtil.isTrustedError(err)){
@@ -27,7 +28,7 @@ export const error_handler_middleware = () => {
             BaseResponse(error.httpCode, {
                 status: "failed",
                 err: error.message
-            }, res)
+            }, res, error.message)
         }
       
     }
