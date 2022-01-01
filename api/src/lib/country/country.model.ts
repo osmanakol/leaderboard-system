@@ -51,7 +51,7 @@ export class Country {
         unique: true,
         trim:true
     })
-    country: string
+    country_name: string
 
     @prop({
         _id: false,

@@ -24,7 +24,7 @@ export class CountryDto implements IModel{
     iso: string
 
     @IsString()
-    country: string
+    country_name: string
 
     @ValidateNested()
     @Type(() => CurrencyDto)
