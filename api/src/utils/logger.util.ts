@@ -53,7 +53,8 @@ class Logger {
             levels: custom_level.levels,
             transports: [isDevEnvironment() ? transport : prodTransport],
             exceptionHandlers: [new winston.transports.File({filename:"logs/exceptions.log"})],
-            handleExceptions: true
+            handleExceptions: true,
+            exitOnError: false
         })
         winston.addColors(custom_level.colors) 
     }

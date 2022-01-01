@@ -1,5 +1,5 @@
 import { randomBytes } from "crypto";
-import express, { Application, NextFunction, Request, Response } from "express";
+import express, { Application } from "express";
 import rateLimit from "express-rate-limit";
 import helmet from "helmet";
 import { ApiRoute } from './routes/api.route';
@@ -12,6 +12,7 @@ class Api {
     
     constructor(){
         this.api = express()
+        this.errorHandlerSetup()
         this.securityOptions()
         this.config()
         this.routeConfig()
@@ -42,7 +43,11 @@ class Api {
     }
 
     private mongoSetup = async () => {
-        await mongo_connection.connection()
+        try {
+            await mongo_connection.connection()
+        } catch (error) {
+            throw error
+        }
     }
 
     private errorHandlerSetup = () => {
