@@ -26,6 +26,12 @@ export class Player {
 
     @prop({ref: Country})
     country:Ref<Country>
+
+    @prop({
+        type: () => Number,
+        default: 0
+    })
+    total_money: Number
 }
 
 const PlayerModel = getModelForClass<typeof Player>(Player, {

@@ -30,7 +30,8 @@ export class PlayerController implements IController {
         const result = await this._playerService.update({_id: req.params.id}, {
             $set:  {
                 username: playerDto.username,
-                country: playerDto.country
+                country: playerDto.country,
+                total_money: playerDto.total_money
             }
         }, {lean:true})
         

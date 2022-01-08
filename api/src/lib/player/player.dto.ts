@@ -1,6 +1,6 @@
 import { Types } from 'mongoose';
 import { IModel } from '../../model/base.model';
-import { IsDate, IsMongoId, IsOptional, IsString, MaxLength, MinLength, ValidateNested } from 'class-validator';
+import { IsDate, IsMongoId, IsNumber, IsOptional, IsString, MaxLength, MinLength, ValidateNested } from 'class-validator';
 import { CountryDto } from '../country/country.dto';
 import { Type } from 'class-transformer';
 
@@ -17,6 +17,9 @@ export class PlayerDto implements IModel {
     @ValidateNested()
     @Type(() => CountryDto)
     country:CountryDto
+
+    @IsNumber()
+    total_money:Number
 
     @IsOptional()
     @IsDate()
