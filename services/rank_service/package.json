@@ -1,6 +1,6 @@
 {
   "name": "rank_service",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "Player Rank System Service",
   "main": "main.ts",
   "scripts": {
