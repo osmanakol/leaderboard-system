@@ -1,6 +1,6 @@
 {
   "name": "api",
-  "version": "1.5.4",
+  "version": "1.5.5",
   "description": "API generate bridge between of client to internal services communication",
   "main": "app.ts",
   "scripts": {
