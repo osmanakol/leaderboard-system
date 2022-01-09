@@ -1,2 +1,2 @@
 FROM mongo
-COPY ./init-scripts/* /docker-entrypoint-initdb.d
+COPY ./init-scripts/countries.json /home/
