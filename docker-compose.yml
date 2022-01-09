@@ -1,0 +1,139 @@
+version: '3'
+services:
+  api:
+    container_name: api_v1
+    network_mode: bridge
+    image: leaderboard_api
+    restart: always
+    build: 
+      context: api
+      dockerfile: Dockerfile
+    ports:
+      - "10001:30000"
+    links:
+      - "mongo"
+    depends_on:
+      - mongo
+  mongo:
+    container_name: mongodb
+    image: mongo
+    build: 
+      context: docker
+      dockerfile: mongo.Dockerfile
+    network_mode: bridge
+    env_file:
+      - docker/.env
+    volumes:
+      - ./data:/data/db
+      - ./docker/init-scripts/:/docker-entrypoint-initdb.d/
+    ports:
+      - "27017:27017"
+  nginx:
+    container_name: "api_gateway"
+    network_mode: host
+    build: 
+      context: .
+      dockerfile: docker/nginx.Dockerfile
+    restart: always
+    depends_on:
+      - api
+    
+  master1:
+    image: redis
+    build:
+      context: docker
+    container_name: redis-cluster1-master
+    command: /bin/bash -c "redis-server /etc/redis/redis.conf"
+    volumes:
+      - /redis-cluster/cluster1/master:/etc/redis
+      - /redis-cluster/cluster1/master:/data
+      - /redis-cluster/cluster1/master:/log
+    ports:
+      - 6379:6379
+    networks:
+      redisNet:
+        ipv4_address: 10.10.10.10
+
+  follow1:
+    image: redis
+    build:
+      context: docker
+    container_name: redis-cluster1-slave
+    command: /bin/bash -c "redis-server /etc/redis/redis.conf"
+    volumes:
+      - /redis-cluster/cluster1/slave:/etc/redis
+      - /redis-cluster/cluster1/slave:/data
+      - /redis-cluster/cluster1/slave:/log
+    ports:
+      - 6380:6379
+    networks:
+      redisNet:
+        ipv4_address: 10.10.10.11
+
+  master2:
+    image: redis
+    build:
+      context: docker
+    container_name: redis-cluster2-master
+    command: /bin/bash -c "redis-server /etc/redis/redis.conf"
+    volumes:
+      - /redis-cluster/cluster2/master:/etc/redis
+      - /redis-cluster/cluster2/master:/data
+      - /redis-cluster/cluster2/master:/log
+    ports:
+      - 6381:6379
+    networks:
+      redisNet:
+        ipv4_address: 10.10.10.12
+
+  follow2:
+    image: redis
+    build:
+      context: docker
+    container_name: redis-cluster2-slave
+    command: /bin/bash -c "redis-server /etc/redis/redis.conf"
+    volumes:
+      - /redis-cluster/cluster2/slave:/etc/redis
+      - /redis-cluster/cluster2/slave:/data
+      - /redis-cluster/cluster2/slave:/log
+    ports:
+      - 6382:6379
+    networks:
+      redisNet:
+        ipv4_address: 10.10.10.13
+
+  master3:
+    image: redis
+    build:
+      context: docker
+    container_name: redis-cluster3-master
+    command: /bin/bash -c "redis-server /etc/redis/redis.conf"
+    volumes:
+      - /redis-cluster/cluster3/master:/etc/redis
+      - /redis-cluster/cluster3/master:/data
+      - /redis-cluster/cluster3/master:/log
+    ports:
+      - 6383:6379
+    networks:
+      redisNet:
+        ipv4_address: 10.10.10.14
+
+  follow3:
+    image: redis
+    build:
+      context: docker
+    container_name: redis-cluster3-slave
+    command: /bin/bash -c "redis-server /etc/redis/redis.conf"
+    volumes:
+      - /redis-cluster/cluster3/slave:/etc/redis
+      - /redis-cluster/cluster3/slave:/data
+      - /redis-cluster/cluster3/slave:/log
+    ports:
+      - 6384:6379   
+    networks:
+      redisNet:
+        ipv4_address: 10.10.10.15
+
+networks:
+  redisNet:
+    external: true
