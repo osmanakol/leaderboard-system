@@ -8,7 +8,7 @@ const mongoSetup = async () => {
     try {
         await mongo_connection.connection()
     } catch (error) {
-        throw error
+        console.log(error)
     }
 }
 
@@ -18,7 +18,7 @@ const serve = () => {
 
     // @ts-ignore
     server.addService(RewardPoolService, new PoolController())
-    server.bindAsync(`${HOST}:50060`, grpc.ServerCredentials.createInsecure(), (err, port) => {
+    server.bindAsync(`${HOST}:${PORT}`, grpc.ServerCredentials.createInsecure(), (err, port) => {
         if (err)
             throw err
 
