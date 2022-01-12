@@ -4,8 +4,9 @@ import rateLimit from "express-rate-limit";
 import helmet from "helmet";
 import { ApiRoute } from './routes/api.route';
 import mongo_connection from "./database/mongo.database";
-import { errorHandlerUtil } from "./utils/index";
+import { errorHandlerUtil, MongoDbError } from "./utils/index";
 import { error_handler_middleware } from "./middleware/error_handler.middleware";
+import { HttpStatusCode } from './utils/base_error.util';
 
 class Api {
     public api: Application
@@ -46,7 +47,7 @@ class Api {
         try {
             await mongo_connection.connection()
         } catch (error) {
-            throw error
+            throw new MongoDbError("MongoConnectionError", HttpStatusCode.INTERNAL_SERVER, true, "MongoDbConnectionError")
         }
     }
 
