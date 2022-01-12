@@ -1,12 +1,12 @@
 import mongo_connection from "./database/mongo.database";
 import * as grpc from "@grpc/grpc-js"
 import { PeriodController } from "./model/period.model/period.controller";
-import { PeriodService } from "../protos/build/rank_service/period_service_grpc_pb";
+import { PeriodService } from "../protos/build/period_service_grpc_pb";
 import { PERIOD_HOST, PERIOD_PORT, SUB_CHANNEL, SORTED_SET_NAME } from "./config";
 import redis_utils from "./utils/redis.util";
 import { getActivePeriods, getStatsViaPeriods } from "./clients/index";
-import { PeriodsReply } from "../protos/build/rank_service/period_service_pb";
-import { PeriodIdReq, StatsViaPeriodReply } from '../protos/build/stats_service/stats_service_pb';
+import { PeriodsReply } from "../protos/build/period_service_pb";
+import { PeriodIdReq, StatsViaPeriodReply } from '../protos/build/stats_service_pb';
 import { PeriodDto } from "./model/period.model/period.dto";
 
 

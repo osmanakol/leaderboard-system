@@ -1,8 +1,8 @@
 import * as grpc from '@grpc/grpc-js';
 import { Empty } from 'google-protobuf/google/protobuf/empty_pb';
-import IController from '../../../../pool_service/src/interfaces/IController';
-import { IPeriodServer } from "../../../protos/build/rank_service/period_service_grpc_pb";
-import { PeriodObj, Periods, GetPeriodViaStartTimes, GetPeriodViaFinishTimes, PeriodsReply } from '../../../protos/build/rank_service/period_service_pb';
+import IController from '../../interfaces/IController';
+import { IPeriodServer } from "../../../protos/build/period_service_grpc_pb";
+import { PeriodObj, Periods, GetPeriodViaStartTimes, GetPeriodViaFinishTimes, PeriodsReply } from '../../../protos/build/period_service_pb';
 import { PeriodDto } from './period.dto';
 import { PeriodService } from './period.service';
 

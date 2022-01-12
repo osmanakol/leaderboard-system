@@ -1,5 +1,5 @@
-import { IModel } from '../../../../stats_service/src/model/base.model';
-import { PeriodObj, PeriodObjReply } from "../../../protos/build/rank_service/period_service_pb";
+import { IModel } from '../base.model';
+import { PeriodObj, PeriodObjReply } from "../../../protos/build/period_service_pb";
 import { PeriodType } from "./period.schema";
 
 export class PeriodDto implements IModel {

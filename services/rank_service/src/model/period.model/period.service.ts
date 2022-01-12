@@ -1,4 +1,4 @@
-import { Service } from '../../../../pool_service/src/interfaces/IService';
+import { Service } from '../../interfaces/IService';
 import { PeriodDto } from './period.dto';
 import { PeriodRepository } from './period.repository';
 import PeriodModel from './period.schema';

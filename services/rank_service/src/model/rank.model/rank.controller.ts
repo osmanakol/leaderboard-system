@@ -1,8 +1,8 @@
-import IController from '../../../../pool_service/src/interfaces/IController';
-import { IRankServer } from "../../../protos/build/rank_service/rank_service_grpc_pb";
+import IController from '../../interfaces/IController';
+import { IRankServer } from "../../../protos/build/rank_service_grpc_pb";
 import * as grpc from "@grpc/grpc-js";
 import { Empty } from 'google-protobuf/google/protobuf/empty_pb';
-import { UpdatePlayerRankReq, PeriodId } from '../../../protos/build/rank_service/rank_service_pb';
+import { UpdatePlayerRankReq, PeriodId } from '../../../protos/build/rank_service_pb';
 
 export class RankController implements IController, IRankServer {
     [name: string]: grpc.UntypedHandleCall;
