@@ -40,11 +40,13 @@ class Logger {
 
     constructor() {
         const prodTransport = new winston.transports.File({
+            format: formatter,
             filename: "logs/error.log",
             level: 'error'
         })
 
         const prodTransportInfo = new winston.transports.File({
+            format:formatter,
             filename: "logs/info.log",
             level: "info"
         })

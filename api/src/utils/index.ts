@@ -1,4 +1,4 @@
-import { APIError, BaseError, HTTP400Error, HttpStatusCode, isMongoDbError } from "./base_error.util";
+import { APIError, BaseError, HTTP400Error, HttpStatusCode, isMongoDbError, MongoDbError } from "./base_error.util";
 import { BaseResponse } from "./base_response.util";
 import errorHandlerUtil from "./error_handler.util";
 import loggerUtil from "./logger.util";
@@ -10,5 +10,6 @@ export {
     BaseResponse,
     errorHandlerUtil,
     loggerUtil,
-    isMongoDbError
+    isMongoDbError,
+    MongoDbError
 }

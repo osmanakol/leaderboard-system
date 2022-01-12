@@ -9,7 +9,9 @@ class MongooseConnection implements IConnection {
     public async connection(): Promise<void> {
         mongoose.Promise = global.Promise
 
-        mongoose.connect(this.uri, MONGO_CONNECT_OPTIONS)
+        mongoose.connect(this.uri, MONGO_CONNECT_OPTIONS).catch((err) => {
+            loggerUtil.error("Failed to Connect MongoDb", err)
+        })
 
         mongoose.connection.on("error", (err) => {
             loggerUtil.error("Failed to Connect MongoDb", err)
@@ -17,6 +19,11 @@ class MongooseConnection implements IConnection {
         })
 
         mongoose.connection.on("disconnected", (err) => {
+            loggerUtil.warn("Mongo db disconnected", err)
+            //console.warn("Mongo db disconnected")
+        })
+
+        mongoose.connection.on("reconnected", (err) => {
             loggerUtil.warn("Mongo db disconnected", err)
             //console.warn("Mongo db disconnected")
         })
