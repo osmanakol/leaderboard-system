@@ -7,29 +7,30 @@ class RedisUtil {
     constructor() {
         this.redis_instance = new Redis.Cluster([
             {
-                port: 7000,
-                host: "127.0.0.1"
+                port: 6379,
+                host: "10.10.10.10"
             },
             {
-                port: 7001,
-                host: "127.0.0.1"
+                port: 6379,
+                host: "10.10.10.11"
             },
             {
-                port: 7002,
-                host: "127.0.0.1"
+                port: 6379,
+                host: "10.10.10.12"
             },
             {
-                port: 7003,
-                host: "127.0.0.1"
+                port: 6379,
+                host: "10.10.10.13"
             },
             {
-                port: 7004,
-                host: "127.0.0.1"
+                port: 6379,
+                host: "10.10.10.14"
             },
             {
-                port: 7005,
-                host: "127.0.0.1"
+                port: 6379,
+                host: "10.10.10.15"
             },
+            
         ], {
             scaleReads: "slave",
             redisOptions: REDIS_OPTIONS
