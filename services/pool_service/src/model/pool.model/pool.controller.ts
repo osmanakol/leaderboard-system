@@ -1,5 +1,5 @@
-import { IRewardPoolServer } from '../../../protos/build/pool_service/reward_pool_grpc_pb';
-import { PeriodId, Money, Pool } from '../../../protos/build/pool_service/reward_pool_pb';
+import { IRewardPoolServer } from '../../../protos/build/reward_pool_grpc_pb';
+import { PeriodId, Money, Pool } from '../../../protos/build/reward_pool_pb';
 import IController from '../../interfaces/IController';
 import { PoolService } from './pool.service';
 import * as grpc from "@grpc/grpc-js";

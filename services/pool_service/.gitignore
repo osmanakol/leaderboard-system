@@ -1,3 +1,5 @@
+.config
+.npm
 node_modules
 *.env
 package-lock.json

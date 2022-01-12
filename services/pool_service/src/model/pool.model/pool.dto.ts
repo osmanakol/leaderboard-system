@@ -1,5 +1,5 @@
 import { IModel } from "../base.model";
-import { Pool } from '../../../protos/build/pool_service/reward_pool_pb';
+import { Pool } from '../../../protos/build/reward_pool_pb';
 
 export class PoolDto implements IModel {
     constructor(grpc_pool: Pool){

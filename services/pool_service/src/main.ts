@@ -1,5 +1,5 @@
 import * as grpc from '@grpc/grpc-js';
-import { RewardPoolService } from '../protos/build/pool_service/reward_pool_grpc_pb';
+import { RewardPoolService } from '../protos/build/reward_pool_grpc_pb';
 import { PoolController } from './model/pool.model/pool.controller';
 import mongo_connection from "./database/mongo.database";
 import { HOST, PORT } from "./config";
