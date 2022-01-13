@@ -5,6 +5,9 @@ import { RedisOptions } from "ioredis";
 export const environment = process.env.NODE_ENV
 export const STAT_PORT = process.env.STAT_PORT
 export const STAT_HOST = process.env.STAT_HOST
+export const POOL_PORT = process.env.POOL_PORT
+export const POOL_HOST = process.env.POOL_HOST
+
 /**ENVIRONMENT SETTINGS */
 
 /** MONGO SETUP */
