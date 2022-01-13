@@ -1,2 +1,5 @@
-.env
-.swp
+*.env
+*.swp
+*.rdb
+*.aof
+nodes.conf
