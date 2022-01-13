@@ -1,5 +1,5 @@
 import * as grpc from '@grpc/grpc-js';
-import { StatsService } from '../protos/build/stats_service/stats_service_grpc_pb';
+import { StatsService } from '../protos/build/stats_service_grpc_pb';
 import { StatController } from './model/stats.model/stats.controller';
 import mongo_connection from "./database/mongo.database";
 import { STAT_HOST, STAT_PORT } from "./config";

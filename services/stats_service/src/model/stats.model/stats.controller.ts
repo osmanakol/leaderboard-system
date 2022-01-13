@@ -1,8 +1,8 @@
 import IController from "../../interfaces/IController";
 import { StatService } from "./stats.service";
-import { IStatsServer } from "../../../protos/build/stats_service/stats_service_grpc_pb";
-import { Pool, PlayerId, PeriodId, Money } from '../../../protos/build/pool_service/reward_pool_pb';
-import { PeriodIdReq, Stat, StatReply, StatsViaPeriodReply } from "../../../protos/build/stats_service/stats_service_pb";
+import { IStatsServer } from "../../../protos/build/stats_service_grpc_pb";
+import { Pool, PlayerId, PeriodId, Money } from '../../../protos/build/reward_pool_pb';
+import { PeriodIdReq, Stat, StatReply, StatsViaPeriodReply } from "../../../protos/build/stats_service_pb";
 import * as grpc from "@grpc/grpc-js"
 import { Empty } from "google-protobuf/google/protobuf/empty_pb";
 import { StatDto } from "./stats.dto";

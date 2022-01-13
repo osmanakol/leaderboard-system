@@ -1,4 +1,4 @@
-import { Stat, StatsViaPeriod } from '../../../protos/build/stats_service/stats_service_pb';
+import { Stat, StatsViaPeriod } from '../../../protos/build/stats_service_pb';
 import { IModel } from '../base.model';
 
 export class StatDto implements IModel{
