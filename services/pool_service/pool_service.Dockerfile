@@ -10,3 +10,4 @@ COPY services/pool_service/ ${HOME}/services/pool_service
 #RUN npm run build
 CMD [ "npm", "run", "prod" ]
 EXPOSE 50060
+
