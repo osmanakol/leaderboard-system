@@ -3,10 +3,21 @@ syntax="proto3";
 package rank.service;
 
 import "google/protobuf/empty.proto";
+//import "google/api/annotations.proto";
 
 service Rank {
     rpc updatePlayerRank(stream UpdatePlayerRankReq) returns (google.protobuf.Empty) {};
-    rpc changePeriod (PeriodId) returns (google.protobuf.Empty) {}; // clean all redis cache and calculate new period data
+    rpc changePeriod (PeriodIdRank) returns (google.protobuf.Empty) {}; // clean all redis cache and calculate new period data
+    rpc pubRank (PeriodIdRank) returns (google.protobuf.Empty) {
+        /*option (google.api.http) = {
+            post: "/rank-update",
+            body: "*"
+        };*/
+    }
+}
+
+message UpdatePlayerRankResp {
+    repeated UpdatePlayerRankReq playerRank = 1;
 }
 
 message UpdatePlayerRankReq {
@@ -14,7 +25,7 @@ message UpdatePlayerRankReq {
     float money = 2;
 }
 
-message PeriodId {
+message PeriodIdRank {
     string id = 1;
 }
 
