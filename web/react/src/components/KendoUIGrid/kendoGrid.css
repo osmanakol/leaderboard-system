@@ -1,0 +1,24 @@
+* {
+  box-sizing: border-box;
+}
+
+.k-grid {
+  background-color: unset !important;
+}
+
+.k-grid-header {
+  background-color: unset !important;
+  color: #ff6600 !important;
+  border: 1px solid #ff6600 !important;
+  border-radius: 10px 10px 0 0 !important;
+}
+
+.k-grid .k-grid-content {
+  background-color: unset !important;
+  border: 1px solid #ff6600 !important;
+  color: white;
+}
+
+.k-grid tbody tr:hover, .k-grid tbody tr.k-state-hover {
+    background-color: #ff6600 !important;
+}
