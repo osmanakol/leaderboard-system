@@ -10,6 +10,7 @@ service Period {
     rpc GetPeriodViaStartTime (GetPeriodViaStartTimes) returns (Periods) {}
     rpc GetPeriodViaFinishTime (GetPeriodViaFinishTimes) returns (Periods) {}
     rpc GetActivePeriod (google.protobuf.Empty) returns (PeriodsReply) {}
+    rpc MakeInActive (PeriodServiceIdReq) returns (google.protobuf.Empty) {}
 }
 
 
@@ -45,6 +46,10 @@ message PeriodObjReply {
     string finish_time = 3;
     PeriodType total_day = 4;
     bool is_active = 5;
+}
+
+message PeriodServiceIdReq {
+    string id = 1;
 }
 
 message PeriodsReply {
