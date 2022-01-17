@@ -5,13 +5,19 @@ import { PlayerService } from "./player.service";
 import { BaseResponse, HttpStatusCode, HTTP400Error } from "../../utils/index";
 import CountryModel from "../country/country.model";
 import { isNullOrUndefined } from "../../helpers/index";
-
+import redisUtil from "../../utils/redis.util";
+import { HSET_PLAYER, SORTED_SET_NAME } from "../../config";
+import { CountryService } from "../country/country.service";
+import { rankUpdate } from "../../client/index";
+import { PeriodIdRank } from "../../../protos/build/rank_service_pb";
 
 export class PlayerController implements IController {
     private _playerService: PlayerService
+    private _countryService: CountryService
 
     constructor() {
         this._playerService = new PlayerService()
+        this._countryService = new CountryService()
     }
 
     public addPlayer = async (req: Request, res: Response, next:NextFunction) => {
@@ -19,6 +25,16 @@ export class PlayerController implements IController {
         playerDto = req.body as PlayerDto
 
         const result = await this._playerService.create(playerDto, {})
+        let redisObject = {
+            "username": result.username,
+            "money": result.total_money,
+            "country": await (await this._countryService.findOne({_id: playerDto.country}, {}, {lean:true})).country_name,
+            "daily_diff": 0
+        }
+        console.log(redisObject)
+        if(result){
+            await redisUtil.hset(HSET_PLAYER, result._id.toString(), JSON.stringify(redisObject))
+        }
 
         BaseResponse(HttpStatusCode.CREATED, result, res)
     }
@@ -35,6 +51,16 @@ export class PlayerController implements IController {
             }
         }, {lean:true})
         
+        let redisObject = {
+            "username": result.username,
+            "money": result.total_money,
+            "country": result.country.country_name
+        }
+
+        if(result){
+            await redisUtil.hset(HSET_PLAYER, result._id.toString(), JSON.stringify(redisObject))
+        }
+
         if (!result)
             throw new HTTP400Error("Player could not found")
 

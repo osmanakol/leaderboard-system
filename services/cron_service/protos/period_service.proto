@@ -1,0 +1,57 @@
+syntax="proto3";
+
+package period.service;
+
+import "google/protobuf/empty.proto";
+
+service Period {
+    rpc AddPeriod (PeriodObj) returns (google.protobuf.Empty) {}
+    rpc GetPeriods (google.protobuf.Empty) returns (Periods) {}
+    rpc GetPeriodViaStartTime (GetPeriodViaStartTimes) returns (Periods) {}
+    rpc GetPeriodViaFinishTime (GetPeriodViaFinishTimes) returns (Periods) {}
+    rpc GetActivePeriod (google.protobuf.Empty) returns (PeriodsReply) {}
+    rpc MakeInActive (PeriodServiceIdReq) returns (google.protobuf.Empty) {}
+}
+
+
+enum PeriodType {
+    NONE = 0;
+    DAILY = 1;
+    WEEKLY = 7;
+    MONTHLY = 30;
+}
+
+message GetPeriodViaStartTimes {
+    string start_time = 1;
+}
+
+message GetPeriodViaFinishTimes {
+    string finish_time = 1;
+}
+
+message Periods {
+    repeated PeriodObj periods = 1;
+}
+
+message PeriodObj {
+    string start_time = 1;
+    string finish_time = 2;
+    PeriodType total_day = 3;
+    bool is_active = 4;
+}
+
+message PeriodObjReply {
+    string _id = 1;
+    string start_time = 2;
+    string finish_time = 3;
+    PeriodType total_day = 4;
+    bool is_active = 5;
+}
+
+message PeriodServiceIdReq {
+    string id = 1;
+}
+
+message PeriodsReply {
+    repeated PeriodObjReply periods = 1;
+}

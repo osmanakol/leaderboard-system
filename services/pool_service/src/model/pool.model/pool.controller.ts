@@ -5,6 +5,7 @@ import { PoolService } from './pool.service';
 import * as grpc from "@grpc/grpc-js";
 import { Empty } from 'google-protobuf/google/protobuf/empty_pb';
 import { PoolDto } from './pool.dto';
+import { Types } from "mongoose";
 
 export class PoolController implements IController, IRewardPoolServer {
     [name: string]: grpc.UntypedHandleCall;
@@ -19,7 +20,7 @@ export class PoolController implements IController, IRewardPoolServer {
         let aggregation_result
         try {
             aggregation_result = await this._poolService.aggregation([
-                { $match: {periodId: call.request.getPeriodId()} },
+                { $match: {periodId: new Types.ObjectId(call.request.getPeriodId())} },
                 { $group: {_id: null, total: {$sum: "$money"}} }
             ])
             console.log(aggregation_result)

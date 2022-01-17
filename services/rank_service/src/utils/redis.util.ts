@@ -35,10 +35,10 @@ class RedisUtil {
             scaleReads: "slave",
             redisOptions: REDIS_OPTIONS
         })
-        this.connect_redis()
+     
     }
     
-    private connect_redis = async () => {
+    public connect_redis = async () => {
         await this.redis_instance.connect()
     }
 
@@ -46,8 +46,33 @@ class RedisUtil {
         await this.redis_instance.disconnect()
     }
 
+
+    public delSet = async (set_name:string): Promise<number> => {
+        return await this.redis_instance.del(set_name)
+    }
+
     public getSet = async (set_name:string): Promise<String | null> => {
         return await this.redis_instance.get(set_name)
+    }
+
+    public hget = async (set_name:string, field:string): Promise<string> => {
+        return await this.redis_instance.hget(set_name, field) || ""
+    }
+
+    public hset = async (set_name:string, field_key:string, value:any) => {
+        return await this.redis_instance.hset(set_name, field_key, value)
+    }
+
+    public hexist = async (set_name:string, field:string) => {
+        return await this.redis_instance.hexists(set_name, field)
+    }
+
+    public hgetall = async (set_name:string) => {
+        return await this.redis_instance.hgetall(set_name)
+    }
+
+    public hlen = async (set_name:string) => {
+        return await this.redis_instance.hlen(set_name)
     }
 
     public addSet = async (set_name: string, data:any, expire_mode:string = "", expire_time:number = 0) => {
@@ -63,8 +88,12 @@ class RedisUtil {
         return await this.redis_instance.zscore(set_name, set_key)
     }
 
-    public getRank = async (set_name: string, set_key: string): Promise<Number | null> => {
-        return await this.redis_instance.zrevrank(set_name, set_key)
+    public getRank = async (set_name: string, set_key: string): Promise<number> => {
+        return await this.redis_instance.zrevrank(set_name, set_key) || -1
+    }
+
+    public getSortedCount = async(set_name:string): Promise<number> => {
+        return await this.redis_instance.zcount(set_name, '-inf', '+inf')
     }
 
     public getRankViaRange = async (set_name:string, start_index: number, stop_index: number): Promise<String[]> => {

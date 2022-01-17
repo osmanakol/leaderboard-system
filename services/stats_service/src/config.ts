@@ -7,6 +7,8 @@ export const STAT_PORT = process.env.STAT_PORT
 export const STAT_HOST = process.env.STAT_HOST
 export const POOL_PORT = process.env.POOL_PORT
 export const POOL_HOST = process.env.POOL_HOST
+export const RANK_PORT = process.env.RANK_PORT
+export const RANK_HOST = process.env.RANK_HOST
 
 /**ENVIRONMENT SETTINGS */
 

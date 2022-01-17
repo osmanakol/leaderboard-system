@@ -1,0 +1,36 @@
+syntax="proto3";
+
+package stats.service;
+
+import "google/protobuf/empty.proto";
+
+service Stats {
+    rpc AddStat (stream Stat) returns (StatReply) {};
+    rpc StatsViaActivePeriod (PeriodIdReq) returns (StatsViaPeriodReply) {};
+    rpc CalculatePeriod (PeriodIdReq) returns (google.protobuf.Empty) {};
+    rpc TriggerRankUpdate (PeriodIdReq) returns (google.protobuf.Empty) {};
+}
+
+
+message Stat {
+    string playerId = 1;
+    string periodId = 2;    
+    float totalMoney = 3;
+}
+
+message PeriodIdReq {
+    string periodId = 1;
+}
+
+message StatsViaPeriod {
+    string playerId = 1;
+    float money = 2;
+}
+
+message StatsViaPeriodReply {
+    repeated StatsViaPeriod stats = 1;
+}
+
+message StatReply {
+    repeated Stat stats = 1;
+}

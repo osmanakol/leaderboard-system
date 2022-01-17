@@ -3,10 +3,11 @@ import { StatService } from "./stats.service";
 import { IStatsServer } from "../../../protos/build/stats_service_grpc_pb";
 import { Pool, PlayerId, PeriodId, Money } from '../../../protos/build/reward_pool_pb';
 import { PeriodIdReq, Stat, StatReply, StatsViaPeriodReply } from "../../../protos/build/stats_service_pb";
+import { PeriodIdRank } from "../../../protos/build/rank_service_pb";
 import * as grpc from "@grpc/grpc-js"
 import { Empty } from "google-protobuf/google/protobuf/empty_pb";
 import { StatDto } from "./stats.dto";
-import { addPool } from "../../clients/index";
+import { addPool, rankUpdate, getTotalMoneyViaPeriod, changePeriod } from "../../clients/index";
 import redisUtils from "../../utils/redis.util";
 import { SUB_CHANNEL } from "../../config";
 import { Types } from "mongoose";
@@ -20,6 +21,7 @@ export class StatController implements IController, IStatsServer {
     constructor(){
         this._statService = new StatService()
     }
+    //calculatePeriod: grpc.handleUnaryCall<PeriodIdReq, Empty>;
    
 
     statsViaActivePeriod = async (call: grpc.ServerUnaryCall<PeriodIdReq, StatsViaPeriodReply>, callback: grpc.sendUnaryData<StatsViaPeriodReply>):Promise<void> => {
@@ -56,7 +58,7 @@ export class StatController implements IController, IStatsServer {
                 let pool: Pool = new Pool()
                 pool.setPlayer(new PlayerId().setPlayerId(statDto.playerId))
                 pool.setPeriod(new PeriodId().setPeriodId(statDto.periodId))
-                pool.setTime(request.getTime())
+                pool.setTime(new Date().toString())
                 pool.setMoney(new Money().setMoney(statDto.poolMoney))
                 const pool_result = await addPool(pool)
                 console.log(pool_result)
@@ -65,6 +67,8 @@ export class StatController implements IController, IStatsServer {
                     periodId: statDto.periodId.toString(), 
                     money: statDto.remainingMoney
                 })
+                const rank_result = await rankUpdate(new PeriodIdRank().setId(statDto.periodId.toString()))
+                console.log(rank_result)
             } catch (error) {
                 console.log(error)
             }
@@ -75,5 +79,25 @@ export class StatController implements IController, IStatsServer {
         })
     }
 
+    calculatePeriod = async (call: grpc.ServerUnaryCall<PeriodIdReq, Empty>, callback: grpc.sendUnaryData<Empty>): Promise<void> => {
+        try {
+            let pool_money = await getTotalMoneyViaPeriod(call.request.getPeriodid())
+            await changePeriod(call.request.getPeriodid(), pool_money.getMoney())
+        } catch (error) {
+            console.log(error)
+        }
 
+        callback(null, new Empty())
+    }
+
+    triggerRankUpdate = async (call: grpc.ServerUnaryCall<PeriodIdReq, Empty>, callback: grpc.sendUnaryData<Empty>): Promise<void> => {
+        try {
+            await rankUpdate(new PeriodIdRank().setId(call.request.getPeriodid()))
+        } catch (error) {
+            console.log(error)
+        }
+
+        callback(null, new Empty())
+    }
+    
 }

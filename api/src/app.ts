@@ -7,6 +7,10 @@ import mongo_connection from "./database/mongo.database";
 import { errorHandlerUtil, MongoDbError } from "./utils/index";
 import { error_handler_middleware } from "./middleware/error_handler.middleware";
 import { HttpStatusCode } from './utils/base_error.util';
+import redisUtil from "./utils/redis.util";
+import { HSET_PLAYER } from "./config";
+import { PlayerService } from "./lib/player/player.service";
+import CountryModel from "./lib/country/country.model";
 
 class Api {
     public api: Application
@@ -19,6 +23,7 @@ class Api {
         this.routeConfig()
         this.mongoSetup()
         this.errorHandlerSetup()
+        this.setRedis()
     }
 
     private config = () => {
@@ -39,8 +44,12 @@ class Api {
             res.locals.cspNonce = randomBytes(16).toString("hex")
             next();
         })
-
-        this.api.use(helmet())
+        this.api.use((req, res, next) => {
+            res.header("Access-Control-Allow-Origin", "*");
+            res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+            next();
+        });
+        //this.api.use(helmet())
     }
 
     private mongoSetup = async () => {
@@ -63,6 +72,28 @@ class Api {
             if (!errorHandlerUtil.isTrustedError(err))
                 process.exit(1)
         })
+    }
+
+    private setRedis =async () => {
+        let result = await redisUtil.hlen(HSET_PLAYER)
+        if(!result){
+            let player_service = new PlayerService()
+            const players = await player_service.find({}, {createdAt:0, updatedAt:0}, {lean:true, populate: {
+                path:"country",
+                match: true,
+                model: CountryModel
+            }})
+            for (const iterator of players) {
+                await redisUtil.hset(HSET_PLAYER, iterator._id.toString(), JSON.stringify(
+                    {   
+                        "username": iterator.username,
+                        "money": iterator.total_money,
+                        "country": iterator.country.country_name,
+                        "daily_diff": 0
+                    })
+                )   
+            }
+        }
     }
 }
 

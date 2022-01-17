@@ -1,0 +1,29 @@
+syntax="proto3";
+
+package reward.service;
+
+import "google/protobuf/empty.proto";
+
+service RewardPool {
+    rpc GetTotalMoneyViaPeriod(PeriodId) returns (Money) {}
+    rpc AddPool(Pool) returns (google.protobuf.Empty) {}
+}
+
+message PlayerId {
+    string player_id = 1;
+}
+
+message PeriodId {
+    string period_id = 1;
+}
+
+message Money {
+    float money = 1;
+}
+
+message Pool {
+    PlayerId player = 1;
+    PeriodId period = 2;
+    Money money = 3;
+    string time = 4;
+}
