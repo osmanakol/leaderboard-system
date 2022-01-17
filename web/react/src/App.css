@@ -11,6 +11,16 @@
   margin: 0 auto;
 }
 
+@media (max-width: 1400px) {
+  .container{
+    width:100%;
+  }
+  .logo-img{
+    width: 60%;
+  }
+ }
+
+
 
 h2{
   color: white;
