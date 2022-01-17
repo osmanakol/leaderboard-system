@@ -22,3 +22,40 @@
 .k-grid tbody tr:hover, .k-grid tbody tr.k-state-hover {
     background-color: #ff6600 !important;
 }
+
+.k-master-row .daily_diff {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  padding: 8px 12px;
+}
+
+.k-master-row .daily_diff .circle {
+  width: 20px;
+  height: 20px;
+  background-color: #80808040;
+  color: #808080;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 2px solid;
+  border-color: #808080;
+}
+
+.k-master-row .daily_diff .circle.high-diff {
+  background-color: #00800052;
+  color: #008000;
+  border-color: #008000;
+}
+
+.k-master-row .daily_diff .circle.low-diff {
+  background-color: #dd150045;
+  color: #dd1500;
+  border-color: #dd1500;
+}
+
+.k-master-row .daily_diff .circle i{
+  font-size: 10px;
+}
