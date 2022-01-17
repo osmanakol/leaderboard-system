@@ -8,7 +8,7 @@ import Register from "../components/Register";
 export default function Scoreboard() {
   const [messages, setMessages] = useState([]);
   const [countries, setCountries] = useState([]);
-  const [ws, setWs] = useState(new WebSocket("ws://192.168.0.14:80/client-sub", "ws+meta.nchan"));
+  const [ws, setWs] = useState(new WebSocket("ws://167.172.53.243:80/client-sub", "ws+meta.nchan"));
   useEffect(() => {
     ws.onopen = () => {
       console.log("Websocket client connected")
@@ -23,14 +23,14 @@ export default function Scoreboard() {
     return () => {
       ws.onclose = () => {
         console.log('WebSocket Disconnected');
-        setWs(new WebSocket("ws://192.168.0.14:80/client-sub", "ws+meta.nchan"));
+        setWs(new WebSocket("ws://167.172.53.243:80/client-sub", "ws+meta.nchan"));
       }
     }
   }, [ws.onmessage, ws.onopen, ws.onclose, messages]);
 
   useEffect(() => {
     
-    fetch("http://192.168.0.14/country")
+    fetch("http://167.172.53.243/api/country")
       .then(function (response) {
         return response.json();
       })

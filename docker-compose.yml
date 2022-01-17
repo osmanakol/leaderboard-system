@@ -35,6 +35,23 @@ services:
     depends_on:
       - mongo
       - follow3
+
+  react:
+    container_name: react
+    network_mode: bridge
+    image: react_app
+    restart: always
+    build: 
+      context: .
+      dockerfile: web/react/react.Dockerfile
+    ports:
+      - "5000:5000"
+    links:
+      - "api"
+      - "api2"
+    depends_on:
+      - mongo
+      - follow3
     
   mongo:
     container_name: mongodb
@@ -174,7 +191,7 @@ services:
     ports:
       - "50070:50070"
     extra_hosts:
-      - "host_machine:192.168.0.14"
+      - "host_machine:167.172.53.243"
     links:
       - "mongo"
       - "pool_service"
