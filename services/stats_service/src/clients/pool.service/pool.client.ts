@@ -20,8 +20,19 @@ const addPool = (pool: Pool):Promise<Empty> => {
     })
 }
 
+const getTotalMoneyViaPeriod = (id:string):Promise<Money> => {
+    return new Promise<Money>((resolve, reject) => {
+        client.getTotalMoneyViaPeriod(new PeriodId().setPeriodId(id), (err ,resp) => {
+            if(err)
+                return reject(err)
+            return resolve(resp)
+        })
+    })
+}
+
 
 
 export {
-    addPool
+    addPool,
+    getTotalMoneyViaPeriod
 }

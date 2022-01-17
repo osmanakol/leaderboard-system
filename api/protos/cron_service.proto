@@ -1,0 +1,16 @@
+syntax="proto3";
+
+package cron.service;
+
+import "google/protobuf/empty.proto";
+
+service Cron {
+    rpc setCron(PeriodCron) returns (google.protobuf.Empty) {};
+}
+
+message PeriodCron {
+    string time = 1;
+    string periodId = 2;
+}
+
+

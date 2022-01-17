@@ -50,12 +50,12 @@ const REDIS_PASSWORD: string = process.env.REDIS_PASSWORD || "";
 export const REDIS_OPTIONS: RedisOptions = {
     port: REDIS_PORT,
     host: REDIS_HOST,
-    password: REDIS_PASSWORD,
     lazyConnect: true,
     autoResubscribe: true
 };
 
 export const SUB_CHANNEL:string = process.env.SUB_CHANNEL || ""
 export const SORTED_SET_NAME: string = process.env.SORTED_SET_NAME || ""
+export const HSET_PLAYER:string = process.env.HSET_PLAYER || "";
 
 /** REDIS SETUP */

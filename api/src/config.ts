@@ -6,6 +6,8 @@ import { ConnectOptions } from 'mongoose';
 export const environment = process.env.NODE_ENV
 export const PORT = process.env.PORT
 export const HOST = process.env.HOST
+export const RANK_PORT = process.env.RANK_PORT
+export const RANK_HOST = process.env.RANK_HOST
 /**ENVIRONMENT SETTINGS */
 
 /** MONGO SETUP */
@@ -29,5 +31,26 @@ export const MONGO_CONNECT_OPTIONS:ConnectOptions  = {
 }
 
 /** MONGO SETUP */
+
+
+/** REDIS SETUP */
+
+const REDIS_PORT: number = parseInt(process.env.REDIS_PORT || "6379", 10);
+const REDIS_HOST: string = process.env.REDIS_HOST || "";
+const REDIS_PASSWORD: string = process.env.REDIS_PASSWORD || "";
+export const HSET_PLAYER:string = process.env.HSET_PLAYER || "";
+
+export const REDIS_OPTIONS: RedisOptions = {
+    port: REDIS_PORT,
+    host: REDIS_HOST,
+    password: REDIS_PASSWORD,
+    lazyConnect: true,
+    autoResubscribe: true
+};
+
+export const SUB_CHANNEL:string = process.env.SUB_CHANNEL || ""
+export const SORTED_SET_NAME: string = process.env.SORTED_SET_NAME || ""
+
+/** REDIS SETUP */
 
 

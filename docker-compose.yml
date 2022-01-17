@@ -4,7 +4,7 @@ services:
     container_name: api_v1
     network_mode: bridge
     image: leaderboard_api
-    #restart: always
+    restart: always
     build: 
       context: api
       dockerfile: Dockerfile
@@ -16,6 +16,43 @@ services:
       - "mongo"
     depends_on:
       - mongo
+      - follow3
+  
+  api2:
+    container_name: api_v2
+    network_mode: bridge
+    image: leaderboard_api
+    restart: always
+    build: 
+      context: api
+      dockerfile: Dockerfile
+    env_file:
+      - api/prod.env
+    ports:
+      - "10002:30000"
+    links:
+      - "mongo"
+    depends_on:
+      - mongo
+      - follow3
+
+  react:
+    container_name: react
+    network_mode: bridge
+    image: react_app
+    restart: always
+    build: 
+      context: .
+      dockerfile: web/react/react.Dockerfile
+    ports:
+      - "5000:5000"
+    links:
+      - "api"
+      - "api2"
+    depends_on:
+      - mongo
+      - follow3
+    
   mongo:
     container_name: mongodb
     image: mongo
@@ -36,30 +73,11 @@ services:
     network_mode: host
     build: 
       context: .
-      dockerfile: docker/nginx.Dockerfile
+      dockerfile: docker/nginx-nchan.Dockerfile
     restart: always
     depends_on:
       - api
-    
-  pool_service:
-    container_name: "pool_service"
-    network_mode: bridge
-    image: pool_service_v1
-    command: /bin/bash -x /tmp/build-protos.sh pool_service
-    # restart: always
-    volumes:
-     - "/protos/:/home/app/api/protos"
-    build: 
-      context: .
-      dockerfile: services/pool_service/pool_service.Dockerfile
-    env_file:
-      - services/pool_service/prod.env
-    ports:
-      - "50060:50060"
-    links:
-      - "mongo"
-    depends_on:
-      - mongo
+      - api2
 
   stats_service:
     container_name: "stats_service"
@@ -78,21 +96,72 @@ services:
       - "50050:50050"
     links:
       - "pool_service"
+      - "rank_service"
+      - "mongo"
+    depends_on:
+      - mongo
+      - pool_service
+      - follow3
+
+  
+  cron_service:
+    container_name: "cron_service"
+    network_mode: bridge
+    image: cron_service
+    command: /bin/bash -x /tmp/build-protos.sh cron_service
+    # restart: always
+    volumes:
+     - "/protos/:/home/app/api/protos"
+    build:
+      context: .
+      dockerfile: services/cron_service/cron_service.Dockerfile
+    env_file:
+      - services/cron_service/prod.env
+    ports:
+      - "50080:50080"
+    links:
+      - "stats_service"
+      - "period_service"
+      - "mongo"
+    depends_on:
+      - mongo
+      - follow3
+      - period_service
+      - stats_service
+      - rank_service
+  
+
+  pool_service:
+    container_name: "pool_service"
+    network_mode: bridge
+    image: pool_service
+    command: /bin/bash -x /tmp/build-protos.sh pool_service
+    # restart: always
+    volumes:
+     - "/protos/:/home/app/api/protos"
+    build: 
+      context: .
+      dockerfile: services/pool_service/pool_service.Dockerfile
+    env_file:
+      - services/pool_service/prod.env
+    ports:
+      - "50060:50060"
+    links:
       - "mongo"
     depends_on:
       - mongo
 
 
-  rank_service:
+  period_service:
     container_name: "period_service"
     network_mode: bridge
-    image: period_service_v1
-    command: bash -x /tmp/build-protos.sh rank_service
+    image: period_service
+    command: bash -x /tmp/build-protos.sh period_service
     build: 
       context: .
-      dockerfile: services/rank_service/rank_service.Dockerfile
+      dockerfile: services/period_service/period_service.Dockerfile
     env_file:
-      - services/rank_service/prod.env
+      - services/period_service/prod.env
     ports:
       - "50040:50040"
     links:
@@ -101,7 +170,33 @@ services:
       - "stats_service"
     depends_on:
       - mongo
-      - stats_service  
+      - stats_service
+      - master1
+      - follow1
+      - master2
+      - follow2
+      - master3
+      - follow3
+
+  rank_service:
+    container_name: "rank_service"
+    network_mode: bridge
+    image: rank_service
+    command: bash -x /tmp/build-protos.sh rank_service
+    build: 
+      context: .
+      dockerfile: services/rank_service/rank_service.Dockerfile
+    env_file:
+      - services/rank_service/prod.env
+    ports:
+      - "50070:50070"
+    extra_hosts:
+      - "host_machine:167.172.53.243"
+    links:
+      - "mongo"
+      - "pool_service"
+    depends_on:
+      - mongo
       - master1
       - follow1
       - master2

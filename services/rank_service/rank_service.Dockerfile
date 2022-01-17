@@ -9,4 +9,4 @@ RUN npm install
 COPY services/rank_service/ ${HOME}/services/rank_service
 #RUN npm run build
 CMD [ "npm", "run", "prod" ]
-EXPOSE 50040
+EXPOSE 50070

@@ -1,13 +1,14 @@
 import mongo_connection from "./database/mongo.database";
 import * as grpc from "@grpc/grpc-js"
-import { PeriodController } from "./model/period.model/period.controller";
-import { PeriodService } from "../protos/build/period_service_grpc_pb";
-import { PERIOD_HOST, PERIOD_PORT, SUB_CHANNEL, SORTED_SET_NAME } from "./config";
+import { SUB_CHANNEL, SORTED_SET_NAME, RANK_PORT, RANK_HOST, HSET_PLAYER } from "./config";
 import redis_utils from "./utils/redis.util";
 import { getActivePeriods, getStatsViaPeriods } from "./clients/index";
 import { PeriodsReply } from "../protos/build/period_service_pb";
 import { PeriodIdReq, StatsViaPeriodReply } from '../protos/build/stats_service_pb';
-import { PeriodDto } from "./model/period.model/period.dto";
+import { RankService } from "../protos/build/rank_service_grpc_pb";
+import { RankController } from "./model/rank.model/rank.controller";
+import redisUtil from "./utils/redis.util";
+
 
 
 const mongoSetup = async () => {
@@ -17,8 +18,7 @@ const mongoSetup = async () => {
         throw error
     }
 }
-
-const check_redis = async (period_id: string) => {
+/*const check_redis = async (period_id: string) => {
     let sort_set_name = `${SORTED_SET_NAME}_${period_id}`
     let result = await redis_utils.checkSortedSet(sort_set_name)
     if (result === 0) {
@@ -30,7 +30,7 @@ const check_redis = async (period_id: string) => {
 }
 
 
-const generate_redis = async () => {
+const get_periods = async () => {
     let activePeriods: PeriodsReply = await getActivePeriods()
 
     let result = await redis_utils.getSet("periods")
@@ -40,9 +40,10 @@ const generate_redis = async () => {
     for (const period of activePeriods.getPeriodsList()) {
         await check_redis(period.getId())
     }
-}
+}*/
 
 const redis_subs = async () => {
+ 
     const subs_client = await redis_utils.redis_instance.duplicate()
 
     subs_client.subscribe(SUB_CHANNEL, (err, count) => {
@@ -52,15 +53,42 @@ const redis_subs = async () => {
         console.log(`Subscribed to ${count} channels`)
     })
 
-    subs_client.on("message", (channel, message) => {
+    subs_client.on("message", async (channel, message) => {
         console.log(`Received message from ${channel} channel`)
         let {playerId, periodId, money} = JSON.parse(message) //  playerId, periodId, money
         let sort_set_name = `${SORTED_SET_NAME}_${periodId}`
-        if (redis_utils.getScore(sort_set_name, playerId) == null){
-            redis_utils.addSortSet(sort_set_name, playerId, money)
+        if (await redis_utils.getScore(sort_set_name, playerId) == null){
+            await redis_utils.addSortSet(sort_set_name, playerId, money)
         }
         else {
-            redis_utils.increaseScore(sort_set_name, playerId, money)
+            let previous_rank =  await redis_utils.getRank(sort_set_name, playerId)
+            await redis_utils.increaseScore(sort_set_name, playerId, money)
+            let current_rank = await redis_utils.getRank(sort_set_name, playerId)
+            let hset =  JSON.parse(await redis_utils.hget(HSET_PLAYER, playerId))
+
+            if(previous_rank !== -1 || current_rank !== -1){
+                let affected_player = null
+                if (previous_rank < current_rank) {
+                   hset["daily_diff"] = -1
+                   affected_player = await redisUtil.getRankViaRange(sort_set_name, previous_rank, current_rank)
+                } else if (previous_rank > current_rank) {
+                    hset["daily_diff"] = 1
+                    affected_player = await redisUtil.getRankViaRange(sort_set_name, current_rank, previous_rank)
+                } else if (hset["daily_diff"] === undefined) {
+                    hset["daily_diff"] = 0
+                }
+                if (affected_player !== null) {
+                    let players = await redisUtil.hgetall(HSET_PLAYER)
+                    for (let index = 0; index < affected_player.length; index+=2) {
+                        let player = JSON.parse(players[`${affected_player[index]}`])
+                        player["daily_diff"] = hset["daily_diff"] === 1 ? -1 : 1
+                        await redis_utils.hset(HSET_PLAYER, `${affected_player[index]}`, JSON.stringify(player))
+                    }
+                }
+            }
+            await redis_utils.hset(HSET_PLAYER, playerId, JSON.stringify(hset))
+            
+            
         }
     })
 
@@ -71,12 +99,17 @@ const redis_subs = async () => {
 }
 
 
-const serve_period = () => {
+const serve_rank = async () => {
     const server = new grpc.Server()
+    try {
+        await redis_utils.connect_redis()
+    } catch (error) {
+        console.log(error)
+    }
 
     // @ts-ignore
-    server.addService(PeriodService, new PeriodController())
-    server.bindAsync(`${PERIOD_HOST}:${PERIOD_PORT}`, grpc.ServerCredentials.createInsecure(), (err, port) => {
+    server.addService(RankService, new RankController())
+    server.bindAsync(`${RANK_HOST}:${RANK_PORT}`, grpc.ServerCredentials.createInsecure(), (err, port) => {
         if (err)
             throw err
 
@@ -87,7 +120,7 @@ const serve_period = () => {
 }
 
 
+serve_rank()
 mongoSetup()
-serve_period()
-generate_redis()
+//get_periods()
 redis_subs()

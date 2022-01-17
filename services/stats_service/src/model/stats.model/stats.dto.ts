@@ -5,7 +5,7 @@ export class StatDto implements IModel{
 
     constructor(grpc_stat: Stat){
       this.playerId = grpc_stat.getPlayerid()
-      this.time = new Date(grpc_stat.getTime())
+      this.time = new Date()
       this.periodId = grpc_stat.getPeriodid()
       this.totalMoney = grpc_stat.getTotalmoney()
       this.calcPool()
@@ -31,7 +31,6 @@ export class StatDto implements IModel{
 
             statObj.setPlayerid(model.playerId)
             statObj.setPeriodid(model.periodId)
-            statObj.setTime(model.time.toString())
             statObj.setTotalmoney(model.totalMoney)
 
             statArray.push(statObj)

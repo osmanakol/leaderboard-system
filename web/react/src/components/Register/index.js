@@ -34,7 +34,7 @@ export default function Register({ countries, ...props }) {
 
   const Submit = () => {
       //useEffect(() => {
-          fetch("http://192.168.0.14/player",{
+          fetch("http://167.172.53.243/api/player",{
             method: "POST",
             body: JSON.stringify({
               "username": getUsername,
