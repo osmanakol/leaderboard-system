@@ -78,8 +78,12 @@ export class RankController implements IController, IRankServer {
             pool_money = pool_money - (money_20 + money_15 + money_10)
             let set_count = await redisUtil.getSortedCount(SORTED_SET_NAME)
             let price = 0
+            let term_count = 0
             if (set_count > 3) {
-                price = pool_money / (await redisUtil.getSortedCount(SORTED_SET_NAME) - 3)
+                // ((last number - first number) / increasing amount) + 1 => number count
+                // ((last number + first number) / 2) * number count => summation of consecutive numbers
+                term_count = (set_count - 4) / 2
+                price = pool_money / (((term_count + 1) / 2) * term_count)
             }
        
 
@@ -88,7 +92,7 @@ export class RankController implements IController, IRankServer {
             for (let index = 0; index < ranks.length; index+=2) {
                 let player = JSON.parse(players[`${ranks[index]}`]) as PlayerDto
                 let total_money = 0
-                if (index <= 6) {
+                if (index < 6) {
                     switch (index) {
                         case 0:
                             total_money = total_money + money_20
@@ -105,7 +109,8 @@ export class RankController implements IController, IRankServer {
                     }
                
                 } else {
-                    total_money = player.total_money.valueOf() + price
+                    total_money = player.total_money.valueOf() + (price * term_count)
+                    term_count = term_count - 1
                 }
                 
                 console.log(total_money)
